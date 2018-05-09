@@ -21,22 +21,18 @@ var burger = require("../models/burger.js");
 router.get("/", function (req, res) {
 	burger.all(function (data) {
 		var hbsObject = {
-			burgers: data
+			burger_name: data
 		};
 		console.log(hbsObject);
 		res.render("index", hbsObject);
 	});
 });
 
-router.post("/api/burgers", function (req, res) {
-	burger.create([
-		"burger_name", "devoured"
-	], [
-			req.body.name, req.body.sleepy
-		], function (result) {
-			// Send back the ID of the new quote
-			res.json({ id: result.insertId });
-		});
+router.post("/burgers/create", function (req, res) {
+	burger.create(req.body.burger_name, function (result) {
+		// Send back the ID of the new quote
+		res.redirect("/");
+	});
 });
 
 router.put("/api/burgers/:id", function (req, res) {
@@ -45,7 +41,7 @@ router.put("/api/burgers/:id", function (req, res) {
 	console.log("condition", condition);
 
 	burger.update({
-		devoured: req.body.devoured
+		devoured: true
 	}, condition, function (result) {
 		if (result.changedRows == 0) {
 			// If no rows were changed, then the ID must not exist, so 404
